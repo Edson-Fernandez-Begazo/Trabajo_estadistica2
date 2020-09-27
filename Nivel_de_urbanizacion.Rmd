@@ -1,0 +1,56 @@
+NIVEL DE URBANIZACION
+
+```{r}
+library(rio)
+lkXLSX="https://github.com/Edsonfernandez123/Trabajo_estadistica2/raw/master/Nivel_de_urbanizacion.xlsx"
+urban=import(lkXLSX)
+```
+
+```{r}
+urban=urban[-c(1:4,1880:1883),-1]
+```
+
+Cambiando el nombre de las columnas:
+
+```{r}
+names(urban)=c("Ubigeo","Departamento/Provincia/Distrito","Urbano Censal","Rural Censal")
+urban=urban[-1,]
+head(urban)
+```
+
+Separando Departamento, Provincia y Distrito:
+
+```{r}
+library(stringr)
+```
+
+```{r}
+urban$Distrito=str_split(urban$`Departamento/Provincia/Distrito`,
+                               pattern = 'distrito:',
+                               simplify = T)[,2]
+urban$Departamento=str_split(urban$`Departamento/Provincia/Distrito`
+                                 ,pattern = ',',
+                                 simplify = T) [,1]
+urban$Provincia=str_split(urban$`Departamento/Provincia/Distrito`,
+                                 pattern = ',',
+                                 simplify = T) [,2]
+urban$`Departamento/Provincia/Distrito`=NULL
+```
+
+```{r}
+urban_ordenado=urban[,c(1,5,6,4,2,3)]
+rm(urban)
+View(urban_ordenado)
+```
+
+Cambiando los valores a numerico:
+
+```{r}
+urban_ordenado[,c(5,6)]=lapply(urban_ordenado[,c(5,6)],as.numeric)
+str(urban_ordenado)
+```
+
+```{r}
+save(urban_ordenado, file = "Urbanizacion.RData")
+```
+

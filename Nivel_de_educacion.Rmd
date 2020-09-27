@@ -1,0 +1,66 @@
+GRADO DE INSTRUCCION
+
+Bajando la data que estaba en formato Excel sobre el Grado de instruccion por distrito segun el censo nacional del 2017:
+
+```{r}
+library(rio)
+lkXLSX="https://github.com/Edsonfernandez123/Trabajo_estadistica2/raw/master/Grado_de_instruccion.xlsx"
+Educacion=import(lkXLSX)
+```
+
+```{r}
+Educacion=Educacion[-c(1:4,1880:1883),-1]
+```
+
+Estoy cambiando el nombre de la columnas: 
+
+```{r}
+names(Educacion)=c("Ubigeo","Distrito","s/e","Inicial","Primaria","Secundaria","Basica_especial","Superior_no_universitaria_incompleta","Superior_no_universitaria_completa","Superior_universitaria_incompleta","Superior_universitaria_completa","Maestria/Doctorado")
+Educacion=Educacion[-1,]
+head(Educacion)
+```
+
+Voy a separar Departamento, Provincia y Distrito:
+
+```{r}
+library(stringr)
+```
+
+```{r}
+
+Educacion$Distrito_1=str_split(Educacion$Distrito,
+                               pattern = 'distrito:',
+                               simplify = T)[,2]
+Educacion$Departamento=str_split(Educacion$Distrito,
+                                 pattern = ',',
+                                 simplify = T) [,1]
+Educacion$Provincia=str_split(Educacion$Distrito,
+                                 pattern = ',',
+                                 simplify = T) [,2]
+Educacion$Distrito=Educacion$Distrito_1
+
+Educacion$Distrito_1=NULL
+
+```
+
+```{r}
+Educacion_1=Educacion[,c(1,13,14,2,3,4,5,6,7,8,9,10,11,12)]
+
+Educacion=Educacion_1
+
+rm(Educacion_1)
+
+View(Educacion)
+```
+
+Cambiando los valores a numerico:
+
+```{r}
+Educacion[,c(5:14)]=lapply(Educacion[,c(5:14)],as.numeric)
+str(Educacion)
+```
+
+```{r}
+save(Educacion, file = "Nivel_de_educacion.RData")
+```
+

@@ -1,0 +1,57 @@
+EDAD POR CICLO DE VIDA
+
+```{r}
+library(rio)
+lkXLSX="https://github.com/Edsonfernandez123/Trabajo_estadistica2/raw/master/Edad_por_ciclo_de_vida.xlsx"
+Edad=import(lkXLSX)
+```
+
+```{r}
+Edad=Edad[-c(1:4,1880:1883),-1]
+```
+
+Estoy cambiando el nombre de la columnas: 
+
+```{r}
+names(Edad)=c("Ubigeo","Departamento/Provincia/Distrito","Primera_infancia:0-5","Niñez:6-11","Adolescencia:12-17","Jovenes:18-29","Adult@s_jovenes:30-44","Adult@s_jovenes:45-59","Adultos_mayores:60-")
+Edad=Edad[-1,]
+head(Edad)
+```
+
+Voy a separar Departamento, Provincia y Distrito:
+
+```{r}
+library(stringr)
+```
+
+```{r}
+
+Edad$Distrito=str_split(Edad$`Departamento/Provincia/Distrito`,
+                               pattern = 'distrito:',
+                               simplify = T)[,2]
+Edad$Departamento=str_split(Edad$`Departamento/Provincia/Distrito`,
+                                 pattern = ',',
+                                 simplify = T) [,1]
+Edad$Provincia=str_split(Edad$`Departamento/Provincia/Distrito`,
+                                 pattern = ',',
+                                 simplify = T) [,2]
+Edad$`Departamento/Provincia/Distrito`=NULL
+```
+
+```{r}
+Edad_ordenada=Edad[,c(1,10,11,9,2,3,4,5,6,7,8)]
+rm(Edad)
+View(Edad_ordenada)
+```
+
+Cambiando los valores a numerico:
+
+```{r}
+Edad_ordenada[,c(5:11)]=lapply(Edad_ordenada[,c(5:11)],as.numeric)
+str(Edad_ordenada)
+```
+
+```{r}
+save(Edad_ordenada, file = "Edad.RData")
+```
+
