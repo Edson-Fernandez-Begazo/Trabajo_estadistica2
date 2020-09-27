@@ -1,0 +1,25 @@
+PARTICIPACION ELECTORAL - ELECCIONES MUNICIPALES 2018
+
+```{r}
+library(rio)
+lkXLSX="https://github.com/Edsonfernandez123/Trabajo_estadistica2/raw/master/Elecciones_Municipales_2018.xlsx"
+EL_2018=import(lkXLSX)
+```
+
+```{r}
+View(EL_2018)
+EL_2018=EL_2018[,-c(6,8,10,12)] #eliminando las columnas de los porcentajes
+View(EL_2018)
+```
+
+Cambiando los valores a númerico:
+
+```{r}
+EL_2018[,c(4:8)]=lapply(EL_2018[,c(4:8)],as.numeric)
+str(EL_2018)
+```
+
+```{r}
+save(EL_2018, file = "Elecciones_municipales_2018.RData") #guardando la data limpia correspondiente a las Elecciones municipales del 2018
+```
+
